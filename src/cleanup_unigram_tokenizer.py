@@ -72,7 +72,15 @@ def create_unigram_subtokenizer(
 
     subtokenizer_model = Unigram(vocab=subscores, unk_id=unk_token_id)
     subtokenizer = Tokenizer(subtokenizer_model)
-    subtokenizer.pre_tokenizer = tokenizer.pre_tokenizer
+
+    if tokenizer.pre_tokenizer is not None:
+        subtokenizer.pre_tokenizer = tokenizer.pre_tokenizer
+    if tokenizer.post_processor is not None:
+        subtokenizer.post_processor = tokenizer.post_processor
+    if tokenizer.normalizer is not None:
+        subtokenizer.normalizer = tokenizer.normalizer
+    if tokenizer.decoder is not None:
+        subtokenizer.decoder = tokenizer.decoder
 
     return subtokenizer, subscores
 
@@ -145,7 +153,7 @@ def fix_unigram_tokenizer(tokenizer_repo, training_dataset, inference_dataset):
     return converted_tokenizer
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     generics_kb = load_dataset(
         "community-datasets/generics_kb", name="generics_kb_best", split="train"
     )
@@ -153,7 +161,7 @@ if __name__ == '__main__':
 
     pony_graphemes = [x.replace("ñ", "n") for x in ponyspeech_dataset["transcription"]]
 
-    n = 120000
+    n = 240000
     generic_graphemes = generics_kb.shuffle().select(range(n))["generic_sentence"]
 
     training_dataset = pony_graphemes
