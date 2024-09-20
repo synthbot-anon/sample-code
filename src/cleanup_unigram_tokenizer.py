@@ -95,14 +95,14 @@ def wrap_unigram_autotokenizer(tokenizer, scores):
     return subtokenizer, ignore_tokens, unk_token_id
 
 
-def fix_unigram_tokenizer(tokenizer_path, training_dataset, inference_dataset):
-    tokenizer = AutoTokenizer.from_pretrained(tokenizer_path)
+def fix_unigram_tokenizer(tokenizer_repo, training_dataset, inference_dataset):
+    tokenizer = AutoTokenizer.from_pretrained(tokenizer_repo)
 
     tokenizer_data = requests.get(
-        f"https://huggingface.co/{tokenizer_path}/resolve/main/tokenizer.json?download=true"
+        f"https://huggingface.co/{tokenizer_repo}/resolve/main/tokenizer.json?download=true"
     ).json()
     tokenizer_config = requests.get(
-        f"https://huggingface.co/{tokenizer_path}/resolve/main/tokenizer_config.json?download=true"
+        f"https://huggingface.co/{tokenizer_repo}/resolve/main/tokenizer_config.json?download=true"
     ).json()
     scores = tokenizer_data["model"]["vocab"]
 
