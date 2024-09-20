@@ -145,20 +145,21 @@ def fix_unigram_tokenizer(tokenizer_repo, training_dataset, inference_dataset):
     return converted_tokenizer
 
 
-generics_kb = load_dataset(
-    "community-datasets/generics_kb", name="generics_kb_best", split="train"
-)
-ponyspeech_dataset = load_dataset("synthbot/pony-speech", split="train")
+if __name__ == '__main__':
+    generics_kb = load_dataset(
+        "community-datasets/generics_kb", name="generics_kb_best", split="train"
+    )
+    ponyspeech_dataset = load_dataset("synthbot/pony-speech", split="train")
 
-pony_graphemes = [x.replace("ñ", "n") for x in ponyspeech_dataset["transcription"]]
+    pony_graphemes = [x.replace("ñ", "n") for x in ponyspeech_dataset["transcription"]]
 
-n = 120000
-generic_graphemes = generics_kb.shuffle().select(range(n))["generic_sentence"]
+    n = 120000
+    generic_graphemes = generics_kb.shuffle().select(range(n))["generic_sentence"]
 
-training_dataset = pony_graphemes
-inference_dataset = generic_graphemes + training_dataset
+    training_dataset = pony_graphemes
+    inference_dataset = generic_graphemes + training_dataset
 
-clean_tokenizer = fix_unigram_tokenizer(
-    "parler-tts/parler-tts-mini-v1", training_dataset, inference_dataset
-)
-clean_tokenizer.save_pretrained("./fixed_tokenizer")
+    clean_tokenizer = fix_unigram_tokenizer(
+        "parler-tts/parler-tts-mini-v1", training_dataset, inference_dataset
+    )
+    clean_tokenizer.save_pretrained("./fixed_tokenizer")
