@@ -135,7 +135,6 @@ def fix_unigram_tokenizer(tokenizer_repo, training_dataset, inference_dataset):
     subtokenizer, subscores = create_unigram_subtokenizer(
         tokenizer, scores, bad_tokens, ignore_tokens, unk_token_id
     )
-    # subtokenizer.save("subtokenizer.json")
 
     vocab = "\n".join(list(subtokenizer.get_vocab()))
     with open("vocab.model", "w") as f:
