@@ -11,9 +11,10 @@ def get_token_counts(tokenizer, dataset):
     }
 
     for text in dataset:
-        tokens = tokenizer.encode(text).tokens
-        encoding = [tokenizer.token_to_id(x) for x in tokens]
+        encoding = tokenizer.encode(text).ids
         for index in encoding:
+            if index not in dataset_token_counts:
+                raise Exception(f"Token index {index} not found in tokenizer vocab")
             dataset_token_counts[index] += 1
 
     return dataset_token_counts
@@ -56,8 +57,13 @@ def create_unigram_subtokenizer(
     for token_id in remove_token_ids:
         if token_id in ignore_tokens:
             continue
-        token = tokenizer.decode([token_id])
+        if token_id == unk_token_id:
+            continue
+        token = tokenizer.id_to_token(token_id)
         remove_tokens.add(token)
+    
+    if len(remove_tokens) != len(set(remove_token_ids) - set(ignore_tokens)):
+        raise Exception("Unable to remove all tokens")
 
     subscores = scores[:]
     for i in reversed(range(len(scores))):
@@ -169,4 +175,5 @@ if __name__ == "__main__":
     clean_tokenizer = fix_unigram_tokenizer(
         "parler-tts/parler-tts-mini-v1", training_dataset, inference_dataset
     )
-    clean_tokenizer.save_pretrained("./fixed_tokenizer")
+
+    clean_tokenizer.save_pretrained("synthbot/parlertts_tokenizer_clean", push_to_hub=True)
